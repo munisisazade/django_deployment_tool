@@ -35,12 +35,13 @@ function create_user {
     read -p "Please enter your linux username: " APP_USER
     done
     echo "APP_USER=$APP_USER" >> "config.txt"
-    read -s "Please enter your linux user password: " APP_USER_PASSWORD
+    echo -e "Please enter your linux user password: "
+    read -s APP_USER_PASSWORD
     while true ; do
     if [ $APP_USER_PASSWORD ]; then
         break
     fi
-    read -s "Please enter your linux user password: " APP_USER_PASSWORD
+    read -s APP_USER_PASSWORD
     done
     echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "config.txt"
     echo -e "Creating new user"

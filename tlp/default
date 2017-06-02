@@ -1,0 +1,38 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
+
+server {
+        client_max_body_size 20M;
+        listen 80;
+        server_name {APP_SERVER};
+
+        error_page 404 /custom_404.html;
+        location = /custom_404.html {
+                root /usr/share/nginx/html;
+                internal;
+        }
+         location /media/ {
+             root  {APP_ROOT_DIRECTORY};
+        }
+        location /static/ {
+             root {APP_ROOT_DIRECTORY};
+        }
+        location / {
+             include proxy_params;
+             proxy_pass http://unix:{APP_ROOT_DIRECTORY}/{APP_NAME}.sock;
+        }
+}
+

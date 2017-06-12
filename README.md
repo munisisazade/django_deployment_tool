@@ -8,5 +8,9 @@ First you need to install python3 and after install django you can run the proje
 if you have a python3 follow this step
 ```
 $ git clone https://github.com/munisisazade/django_deployment_tool.git
-$ done
+$ cd django_deployment_tool
+$ chmod +x deploy.sh
+$ ./deploy.sh usage
+$ ./deploy.sh deploy
+$ ./deploy.sh status
 ```

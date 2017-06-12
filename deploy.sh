@@ -10,7 +10,9 @@ function usage {
     echo -e "Usage: bash $0 <COMMAND>"
     echo -e "\nCommands:"
 
-    echo -e "\t flush \t\t\t\t - For completely flushing DB"
+    echo -e "\t usage \t\t\t\t - For helping available commands to use"
+    echo -e "\t deploy \t\t\t\t - Base command to deployment"
+    echo -e "\t status \t\t\t\t - Show status of deployment"
     echo -e "\t delete \t\t\t - Delete DB"
     echo -e "\t create \t\t\t - Create DB"
     echo -e "\t upgrade \t\t\t - Upgrade cluster version of PostgreSQL to $POSTGRESQL_UPGRADE_TO"
@@ -20,10 +22,30 @@ function usage {
     exit 1
 }
 
+function deployment_status() {
+    . config.txt
+    if [[ $APP_USER && $APP_USER_PASSWORD ]]; then
+        echo -e "Current deploy status:"
+        echo -e "\n"
+        echo -e "\nDjango\t\t\t\t\tAlready Deploy"
+        echo -e "\n"
+        echo -e "The Application is ready to use please use"
+        echo -e "Change the user by command sudo su - $APP_USER"
+    else
+        echo -e "Current deploy status:"
+        echo -e "\n"
+        echo -e "Django\t\t\t\t\tnot deploy"
+        echo -e "\n"
+        echo -e "The Application is not Deploy please use ./deploy.sh deploy"
+    fi
 
-function create_user {
+
+}
+
+
+function get_user_credential {
     echo -e "Ubuntu Update apt package ...."
-    #apt-get update
+    apt-get -y update
     echo -e "Creating new User for $(uname -a)"
     echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "config.txt"
     echo -e "Please write New Linux User name and password"
@@ -44,9 +66,24 @@ function create_user {
     read -s APP_USER_PASSWORD
     done
     echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "config.txt"
-    echo -e "Creating new user"
 
 }
+
+function  create_new_linux {
+    . config.txt
+    if ! getent $APP_USER_PASSWORD $APP_USER  > /dev/null ; then
+        echo -e "Creating New Linux User please wait .."
+
+    else
+        echo -e "Already You was created New user with Bellow credential"
+        echo -e "\t Username : \t - $APP_USER"
+        echo -e "\t Password : \t - $APP_USER_PASSWORD"
+        echo -e "\t Created time \t - $(date)"
+    fi
+
+}
+
+
 ################
 #### START  ####
 ################
@@ -57,6 +94,15 @@ ARG1=${@:$OPTIND+1:1}
 
 #CHECKING PARAMS VALUES
 case ${COMMAND} in
+
+    usage)
+        usage
+
+    ;;
+
+    status)
+    deployment_status
+    ;;
 
 	flush)
 
@@ -107,7 +153,8 @@ case ${COMMAND} in
 
 	;;
     case)
-        create_user
+        get_user_credential
+        create_new_linux
     ;;
     *)
 

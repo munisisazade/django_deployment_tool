@@ -96,12 +96,15 @@ ARG1=${@:$OPTIND+1:1}
 case ${COMMAND} in
 
     usage)
+
         usage
 
     ;;
 
     status)
-    deployment_status
+
+        deployment_status
+
     ;;
 
 	flush)

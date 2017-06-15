@@ -16,4 +16,4 @@ $ ./deploy.sh usage
 $ ./deploy.sh deploy
 $ ./deploy.sh status
 ```
-# And Read full documentation [Documentation](http://django-debug-toolbar.readthedocs.io/en/latest) #
+# And Read full documentation [Documentation](http://django-deployment-tool.readthedocs.io/en/latest/) #

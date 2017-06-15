@@ -36,4 +36,5 @@ After installation you can executable command using ``chmod`` bash command::
     $ chmod +x deploy.sh
 
 Already ready use this tool just typing::
+
     $ ./deploy.sh usage

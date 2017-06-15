@@ -17,3 +17,7 @@ $ ./deploy.sh deploy
 $ ./deploy.sh status
 ```
 # And Read full documentation [Documentation](http://django-deployment-tool.readthedocs.io/en/latest/) #
+#
+<p align="center">
+  <img src="https://im2.ezgif.com/tmp/ezgif-2-c12c77840c.gif" width="800" height="450">
+</p>

@@ -1,5 +1,5 @@
-Django Debug Toolbar
-====================
+Django Deployment Tool
+======================
 
 .. toctree::
    :maxdepth: 2

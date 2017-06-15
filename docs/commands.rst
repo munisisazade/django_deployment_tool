@@ -1,47 +1,35 @@
 Commands
 ========
 
-The Debug Toolbar currently provides one Django management command.
+The Django Deployment Tools avilable Command Here.
 
-``debugsqlshell``
------------------
+``usage``
+---------
 
-This command starts an interactive Python shell, like Django's built-in
-``shell`` management command. In addition, each ORM call that results in a
-database query will be beautifully output in the shell.
+This command help to user find how to use it tools
 
 Here's an example::
 
-    >>> from page.models import Page
-    >>> ### Lookup and use resulting in an extra query...
-    >>> p = Page.objects.get(pk=1)
-    SELECT "page_page"."id",
-           "page_page"."number",
-           "page_page"."template_id",
-           "page_page"."description"
-    FROM "page_page"
-    WHERE "page_page"."id" = 1
+    $ ./deploy.sh usage
+    $ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    $
+    $       Django Deployment Tool v0.1
+    $       Munis Isazade - munisisazade@gmail.com
+    $ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    $
+    $ Usage: bash ./deploy.sh <COMMAND>
+    $
+    $ Commands:
+    $       usage                   - For helping available commands to use
+    $
 
-    >>> print p.template.name
-    SELECT "page_template"."id",
-           "page_template"."name",
-           "page_template"."description"
-    FROM "page_template"
-    WHERE "page_template"."id" = 1
+``deploy``
+----------
 
-    Home
-    >>> ### Using select_related to avoid 2nd database call...
-    >>> p = Page.objects.select_related('template').get(pk=1)
-    SELECT "page_page"."id",
-           "page_page"."number",
-           "page_page"."template_id",
-           "page_page"."description",
-           "page_template"."id",
-           "page_template"."name",
-           "page_template"."description"
-    FROM "page_page"
-    INNER JOIN "page_template" ON ("page_page"."template_id" = "page_template"."id")
-    WHERE "page_page"."id" = 1
+This is the base Command of Deployment tools
 
-    >>> print p.template.name
-    Home
+``status``
+----------
+
+This command check deployment Status
+

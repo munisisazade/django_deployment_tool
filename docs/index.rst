@@ -5,9 +5,5 @@ Django Deployment Tool
    :maxdepth: 2
 
    installation
-   configuration
-   tips
-   panels
    commands
-   changes
    contributing

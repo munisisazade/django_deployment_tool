@@ -1,6 +1,8 @@
 #!/bin/bash
 # Author Munis Isazade Django developer
 VERSION="0.1"
+CONF_ROOT=/home/root/django_deployment_tool
+
 
 function usage {
     echo -e "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n"
@@ -23,7 +25,7 @@ function usage {
 }
 
 function deployment_status() {
-    . config.txt
+    . $CONF_ROOT/config.txt
     if [[ $APP_USER && $APP_USER_PASSWORD ]]; then
         echo -e "Current deploy status:"
         echo -e "\n"
@@ -52,7 +54,7 @@ function get_user_credential {
     apt-get -y install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
     apt-get -y python3-venv
     echo -e "Creating new User for $(uname -a)"
-    echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "config.txt"
+    echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
     echo -e "Please write New Linux User name and password"
     read -p "Please enter your linux username: " APP_USER
     while true ; do
@@ -61,7 +63,7 @@ function get_user_credential {
     fi
     read -p "Please enter your linux username: " APP_USER
     done
-    echo "APP_USER=$APP_USER" >> "config.txt"
+    echo "APP_USER=$APP_USER" >> "$CONF_ROOT/config.txt"
     echo -e "Please enter your linux user password: "
     read -s APP_USER_PASSWORD
     while true ; do
@@ -70,7 +72,7 @@ function get_user_credential {
     fi
     read -s APP_USER_PASSWORD
     done
-    echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "config.txt"
+    echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "$CONF_ROOT/config.txt"
 
 }
 
@@ -86,7 +88,7 @@ function fix_perl_locale_error() {
 }
 
 function  create_new_linux_user {
-    . config.txt
+    . $CONF_ROOT/config.txt
     if ! getent $APP_USER_PASSWORD $APP_USER  > /dev/null ; then
         echo -e "Creating New Linux User please wait .."
         pass=$(perl -e 'print crypt($ARGV[0], "password")' $APP_USER_PASSWORD)
@@ -107,11 +109,11 @@ function  create_new_linux_user {
 }
 
 function  get_project_details {
-    . config.txt
+    . $CONF_ROOT/config.txt
     echo -e "Please Write your projects detailed...."
     apt-get -y update
     echo -e "Creating new User for $(uname -a)"
-    echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "config.txt"
+    echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
     echo -e "Please write your git repository url here"
     read -p "Git Repo(https): " GIT_REPO_URL
     while true ; do
@@ -120,7 +122,7 @@ function  get_project_details {
     fi
     read -p "Please enter Repo Url(https): " GIT_REPO_URL
     done
-    echo "GIT_REPO_URL=$GIT_REPO_URL" >> "config.txt"
+    echo "GIT_REPO_URL=$GIT_REPO_URL" >> "$CONF_ROOT/config.txt"
     read -p "git root file name : " GIT_ROOT
     while true ; do
     if [ $GIT_ROOT ]; then
@@ -128,12 +130,12 @@ function  get_project_details {
     fi
     read -p "Please enter git root file name : " GIT_ROOT
     done
-    echo "GIT_ROOT=$GIT_ROOT" >> "config.txt"
+    echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
     echo -e "Clonig git repository from this url:  $GIT_REPO_URL"
     cd /home/$APP_USER
     git clone $GIT_REPO_URL
     cd $GIT_ROOT
-    echo "APP_ROOT_DIRECTOR=$(pwd)" >> "config.txt"
+    echo "APP_ROOT_DIRECTOR=$(pwd)" >> "$CONF_ROOT/config.txt"
     echo -e "Please Last time write to project name (Django base app name) :"
     read -p "Project name : " APP_NAME
     while true ; do
@@ -142,7 +144,7 @@ function  get_project_details {
     fi
     read -p "Project name : " APP_NAME
     done
-    echo "APP_NAME=$APP_NAME" >> "config.txt"
+    echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
 
 
 
@@ -152,19 +154,19 @@ function  get_project_details {
 }
 
 function configuration_server() {
-    . config.txt
+    . $CONF_ROOT/config.txt
     echo -e "Configuration Nginx credentials.."
-    sed -i -e 's|#{APP_SERVER}|'$APP_SERVER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' tlp/default
+    sed -i -e 's|#{APP_SERVER}|'$APP_SERVER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/default
     echo -e "Create nginx default server.."
     cp -r tlp/default /etc/nginx/sites-available/default
     echo -e "Gunicorn file created.."
-    sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' tlp/gunicorn.service
+    sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/gunicorn.service
     cp -r tlp/gunicorn.service /etc/systemd/system/
     echo -e "Everything works cool :)"
 }
 
 function create_virtualenv() {
-    . config.txt
+    . $CONF_ROOT/config.txt
     cd $APP_ROOT_DIRECTORY
     python3 -m venv .venv
     source .venv/bin/activate

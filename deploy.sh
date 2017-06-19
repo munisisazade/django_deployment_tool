@@ -45,10 +45,11 @@ function deployment_status() {
 
 function get_user_credential {
     echo -e "Ubuntu Update apt package ...."
+    chmod +x config.txt
     apt-get -y update
     apt-get -y install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx
     apt-get -y update
-    apt-get install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
+    apt-get -y install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
     apt-get -y python3-venv
     echo -e "Creating new User for $(uname -a)"
     echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "config.txt"
@@ -160,7 +161,16 @@ function configuration_server() {
     sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' tlp/gunicorn.service
     cp -r tlp/gunicorn.service /etc/systemd/system/
     echo -e "Everything works cool :)"
-    git pull
+}
+
+function create_virtualenv() {
+    . config.txt
+    cd $APP_ROOT_DIRECTORY
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    pip install -U pip
+    python manage.py migrate
     systemctl start nginx
     systemctl start gunicorn
     systemctl restart nginx
@@ -208,6 +218,7 @@ case ${COMMAND} in
         create_new_linux_user
         get_project_details
         configuration_server
+        create_virtualenv
     ;;
 
 	flush)

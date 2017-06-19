@@ -1,7 +1,7 @@
 #!/bin/bash
 # Author Munis Isazade Django developer
 VERSION="0.1"
-CONF_ROOT=/home/root/django_deployment_tool
+CONF_ROOT=/root/django_deployment_tool
 
 
 function usage {

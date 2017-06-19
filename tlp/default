@@ -17,7 +17,7 @@
 server {
         client_max_body_size 20M;
         listen 80;
-        server_name {APP_SERVER};
+        server_name #{APP_SERVER};
 
         error_page 404 /custom_404.html;
         location = /custom_404.html {
@@ -25,14 +25,14 @@ server {
                 internal;
         }
          location /media/ {
-             root  {APP_ROOT_DIRECTORY};
+             root  #{APP_ROOT_DIRECTORY};
         }
         location /static/ {
-             root {APP_ROOT_DIRECTORY};
+             root #{APP_ROOT_DIRECTORY};
         }
         location / {
              include proxy_params;
-             proxy_pass http://unix:{APP_ROOT_DIRECTORY}/{APP_NAME}.sock;
+             proxy_pass http://unix:#{APP_ROOT_DIRECTORY}/#{APP_NAME}.sock;
         }
 }
 

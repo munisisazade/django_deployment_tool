@@ -7,7 +7,7 @@ APP_NAME=#{APP_NAME}
 APP_USER=#{APP_USER}
 
 
-sudo su - #{APP_USER} << EOF
+sudo su - $APP_USER << EOF
     echo -e "Clonig git repository from this url:  $GIT_REPO_URL"
     cd /home/$APP_USER
     git clone $GIT_REPO_URL

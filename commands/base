@@ -3,7 +3,7 @@
 CONF_ROOT=/var/local
 
 sudo su - #{APP_USER} << EOF
-    sudo . $CONF_ROOT/config.txt
+    . $CONF_ROOT/config.txt
     echo -e "Clonig git repository from this url:  $GIT_REPO_URL"
     cd /home/$APP_USER
     git clone $GIT_REPO_URL
@@ -22,10 +22,10 @@ sudo su - #{APP_USER} << EOF
     echo -e "Configuration Nginx credentials.."
     sudo sed -i -e 's|#{APP_SERVER}|'$APP_SERVER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/default
     echo -e "Create nginx default server.."
-    sudo cp -r tlp/default /etc/nginx/sites-available/default
+    sudo cp -r $CONF_ROOT/tlp/default /etc/nginx/sites-available/default
     echo -e "Gunicorn file created.."
     sudo sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/gunicorn.service
-    sudo cp -r tlp/gunicorn.service /etc/systemd/system/
+    sudo cp -r $CONF_ROOT/tlp/gunicorn.service /etc/systemd/system/
     echo -e "Everything works cool :)"
     sudo cp -r $CONF_ROOT/commands/restart /bin/
     sudo chmod +x /bin/restart

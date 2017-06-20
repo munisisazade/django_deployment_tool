@@ -148,9 +148,18 @@ function  get_project_details {
     read -p "Project name : " APP_NAME
     done
     echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
+    echo -e "Make commands executable"
     cp -r  $CONF_ROOT/config.txt /var/local/
     chown -R $APP_USER:$APP_USER /var/local/config.txt
     chmod -R 777 /var/local/config.txt
+    cp -r  $CONF_ROOT/commands /var/local/
+    chown -R $APP_USER:$APP_USER /var/local/commands
+    chown -R $APP_USER:$APP_USER /var/local/commands/*
+    chmod -R 777 /var/local/commands/*
+    cp -r  $CONF_ROOT/tlp /var/local/
+    chown -R $APP_USER:$APP_USER /var/local/tlp
+    chown -R $APP_USER:$APP_USER /var/local/tlp/*
+    chmod -R 777 /var/local/tlp/*
     echo -e "Base command sed "
     sed -i -e 's|#{APP_USER}|'$APP_USER'|g' $CONF_ROOT/commands/base
     cp -r  $CONF_ROOT/commands/base /bin/

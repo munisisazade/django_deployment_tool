@@ -149,7 +149,7 @@ function  get_project_details {
     done
     echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
     echo -e "Base command sed "
-    sed -i -e 's|#{APP_USER}|'$APP_USER'|g' $CONF_ROOT/commands/base
+    sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{CONF_ROOT}|'$CONF_ROOT'|g' $CONF_ROOT/commands/base
     cp -r  $CONF_ROOT/commands/base /bin/
     chmod +x /bin/base
     base

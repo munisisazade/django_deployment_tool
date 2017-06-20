@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CONF_ROOT=#{CONF_ROOT}
+
 sudo su - #{APP_USER} << EOF
     sudo . $CONF_ROOT/config.txt
     echo -e "Clonig git repository from this url:  $GIT_REPO_URL"

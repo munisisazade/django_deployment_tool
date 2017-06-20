@@ -161,7 +161,7 @@ function  get_project_details {
     chown -R $APP_USER:$APP_USER /var/local/tlp/*
     chmod -R 777 /var/local/tlp/*
     echo -e "Base command sed "
-    sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{GIT_ROOT}|'$GIT_ROOT'|g' -e 's|#{APP_SERVER}|'$APP_SERVER'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/commands/base
+    sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/base
     cp -r  $CONF_ROOT/commands/base /bin/
     chmod +x /bin/base
     base

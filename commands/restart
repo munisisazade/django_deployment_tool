@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo -e "Git pull update project and Restart Nginx and Gunicorn"
+git pull
+sudo systemctl restart nginx
+echo "Restarting nginx:                                                    [OK]"
+sudo systemctl restart gunicorn
+echo "Restarting Gunicorn:                                                 [OK]"
+echo "Everything is OK :)"

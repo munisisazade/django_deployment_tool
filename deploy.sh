@@ -1,7 +1,12 @@
 #!/bin/bash
 # Author Munis Isazade Django developer
 VERSION="0.1"
+ERROR_STATUS=0
 CONF_ROOT=/root/django_deployment_tool
+POSTGRESQL_USER=postgres
+POSTGRESQL_CLUSTER_VERSION="$(sudo pg_lsclusters | egrep -o '[0-9]{1,}\.[0-9]{1,}' | (read a; echo $a;))" # $(pg_config --version | egrep -o '[0-9]{1,}\.[0-9]{1,}')
+POSTGRESQL_UPGRADE_TO=9.5
+
 
 
 function usage {
@@ -48,11 +53,13 @@ function deployment_status() {
 function get_user_credential {
     echo -e "Ubuntu Update apt package ...."
     chmod +x config.txt
+    echo -e "Installing python2 pip and depencies ..."
     apt-get -y update
     apt-get -y install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx
     apt-get -y update
+    echo -e "Installing python3 pip and depencies ..."
     apt-get -y install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
-    apt-get -y python3-venv
+    apt-get -y install python3-venv
     echo -e "Creating new User for $(uname -a)"
     echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
     echo -e "Please write New Linux User name and password"
@@ -165,6 +172,175 @@ function configuration_server() {
     echo -e "Everything works cool :)"
 }
 
+
+function create_database {
+    # Database creation
+    . $CONF_ROOT/config.txt
+    read -p "Postgres Database name : " APP_DB_NAME
+    while true ; do
+    if [ $APP_DB_NAME ]; then
+        break
+    fi
+    read -p "Please enter Postgres Database name : " APP_DB_NAME
+    done
+    echo "APP_DB_NAME=$APP_DB_NAME" >> "$CONF_ROOT/config.txt"
+    read -p "Postgres Database password : " APP_DB_PASSWORD
+    while true ; do
+    if [ $APP_DB_PASSWORD ]; then
+        break
+    fi
+    read -p "Please enter Postgres Database password : " APP_DB_PASSWORD
+    done
+    echo "APP_DB_PASSWORD=$APP_DB_PASSWORD" >> "$CONF_ROOT/config.txt"
+    echo "----- PostgreSQL v$POSTGRESQL_CLUSTER_VERSION: Creating database and user..."
+sudo su - ${POSTGRESQL_USER} << EOF
+# -------[script begins]-------
+# psql --help
+psql -c "
+CREATE USER $APP_USER WITH PASSWORD '$APP_DB_PASSWORD';
+"
+createdb --owner $APP_DB_USER $APP_DB_NAME
+# -------[script ends]-------
+EOF
+}
+
+function delete_database {
+	# Delete database
+	. $CONF_ROOT/config.txt
+    clear
+    echo "************************************************************************"
+    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! DANGER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "************************************************************************"
+    echo ""
+    read -p "Are you sure you want flush entirely DATABASE? (y/n): " confirm_delete
+    if [ "$confirm_delete" == y ] ; then
+        echo "----- PostgreSQL v$POSTGRESQL_CLUSTER_VERSION: Delete DB and user"
+
+        # restart cluster
+        sudo pg_ctlcluster ${POSTGRESQL_CLUSTER_VERSION} main restart --force
+        # sudo /etc/init.d/postgresql restart
+
+        # delete user
+sudo su - ${POSTGRESQL_USER} << EOF
+# -------[script begins]-------
+dropdb ${APP_DB_NAME}
+psql -c "DROP USER ${APP_USER};"
+# -------[script ends]-------
+EOF
+    fi
+}
+
+function upgrade_cluster {
+    . $CONF_ROOT/config.txt
+    # Upgrade PostgreSQL 9.3 to 9.5 on Ubuntu 14.04 and Ubuntu 16.04
+    # ref: https://medium.com/@tk512/upgrading-postgresql-from-9-3-to-9-4-on-ubuntu-14-04-lts-2b4ddcd26535#.4i136rihe
+    if [ "$POSTGRESQL_CLUSTER_VERSION" != "$POSTGRESQL_UPGRADE_TO" ]; then
+        echo "----- PostgreSQL v$POSTGRESQL_CLUSTER_VERSION: Dump"
+        # http://www.postgresql.org/docs/9.4/static/backup-dump.html
+
+        sudo su - ${POSTGRESQL_USER} << EOF
+# -------[script begins]-------
+psql -U ${POSTGRESQL_USER} -l
+mkdir -p ./backups
+pg_dumpall > ./backups/old_.db
+# -------[script ends]-------
+EOF
+
+        echo "----- PostgreSQL: stop the current database..."
+        sudo /etc/init.d/postgresql stop
+
+        echo "----- PostgreSQL: Create a new list..."
+        sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+        wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+        echo "----- PostgreSQL: download $POSTGRESQL_UPGRADE_TO"
+        sudo apt-get update
+        sudo apt-get install -y postgresql-${POSTGRESQL_UPGRADE_TO}
+
+        sudo pg_lsclusters
+
+        sudo pg_dropcluster --stop ${POSTGRESQL_UPGRADE_TO} main
+        sudo /etc/init.d/postgresql start
+
+        echo "----- PostgreSQL: Upgrade to $POSTGRESQL_UPGRADE_TO"
+        sudo pg_upgradecluster ${POSTGRESQL_CLUSTER_VERSION} main
+        sudo pg_dropcluster ${POSTGRESQL_CLUSTER_VERSION} main
+        sudo pg_lsclusters
+    else
+        echo -e "\n ==> Cluster up to date! \n"
+    fi
+}
+
+# ------------------------
+# Dump the DB that given in config file to the passed destination
+function restore_from_source {
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    # *  Restoring Django database
+    # - http://stackoverflow.com/a/2732521/968751
+    #
+    #   1) Include project variables
+    #   2) Drop existing database if you want overwrite
+    #   3) Drop the User, database associated with
+    #   4) Create User
+    #   5) Create Database but don't `migrate` yet
+    #   6) Restore the database from dump file
+    #   7) Create proper rules for the restored tables
+    #
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    # 1) . /vagrant/vagrant_setup/config.txt
+    # 2) dropdb $APP_DB_NAME
+    # 3) psql -c " DROP USER $APP_DB_USER;"
+    # 4) psql -c " CREATE USER $APP_DB_USER WITH PASSWORD '$APP_DB_PASSWORD'; "
+    # 5) createdb --owner $APP_DB_USER $APP_DB_NAME
+    # 6) psql $APP_DB_NAME -f ./backups/dump_24aug.sql
+    # 7) for tbl in `psql -qAt -c "select tablename from pg_tables where schemaname = 'public';" $APP_DB_NAME` ; do  psql -c "alter table \"$tbl\" owner to $APP_DB_USER" $APP_DB_NAME ; done
+    #    for tbl in `psql -qAt -c "select sequence_name from information_schema.sequences where sequence_schema = 'public';" $APP_DB_NAME` ; do  psql -c "alter table \"$tbl\" owner to $APP_DB_USER" $APP_DB_NAME ; done
+    #    for tbl in `psql -qAt -c "select table_name from information_schema.views where table_schema = 'public';" $APP_DB_NAME` ; do  psql -c "alter table \"$tbl\" owner to $APP_DB_USER" $APP_DB_NAME ; done
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    # pg_restore -U $APP_DB_USER -d $APP_DB_NAME -1 <filename>
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    . $CONF_ROOT/config.txt
+    local SRC=$(normalize_path "$1")
+    local FILENAME="${SRC##*/}"
+
+    if [ ! -f ${SRC} ]; then
+        echo -e "\n==> File not found: '$SRC'\n"
+        exit 1
+    fi
+
+    echo "----- PostgreSQL v$POSTGRESQL_CLUSTER_VERSION: Importing DB from file '$SRC'"
+    cp --no-preserve=mode,ownership ${SRC} /tmp/
+    sudo su - ${POSTGRESQL_USER} << EOF
+# -------[script begins]-------
+pg_restore -U ${POSTGRESQL_USER} -d ${APP_DB_NAME} -1 /tmp/${FILENAME}
+# -------[script ends]-------
+EOF
+    sudo rm -rf /tmp/${FILENAME}
+}
+
+# ------------------------
+# Dump the DB that given in config file to the passed destination
+function dump_to_destination {
+    # Dump DB to given destination
+    . $CONF_ROOT/config.txt
+    local DST=$(normalize_path "$1")
+    local BACKUP_DATE=$(date '+%d-%b-%Y')
+
+    echo "----- PostgreSQL v$POSTGRESQL_CLUSTER_VERSION: Exporting DB to '$DST'"
+    sudo su - ${POSTGRESQL_USER} << EOF
+# -------[script begins]-------
+mkdir -p ./backups
+pg_dump -E UTF-8 -Fc ${APP_DB_NAME} > ./backups/${APP_DB_NAME}\_${BACKUP_DATE}.sql
+\cp -i ./backups/${APP_DB_NAME}\_${BACKUP_DATE}.sql /tmp
+# -------[script ends]-------
+EOF
+    cp --no-preserve=mode,ownership /tmp/${APP_DB_NAME}\_${BACKUP_DATE}.sql ${DST}
+    sudo rm /tmp/${APP_DB_NAME}\_${BACKUP_DATE}.sql
+}
+
+
+
+
 function create_virtualenv() {
     . $CONF_ROOT/config.txt
     cd $APP_ROOT_DIRECTORY
@@ -187,6 +363,24 @@ function create_virtualenv() {
     echo "---"
     echo "---"
 
+}
+
+function normalize_path
+{
+    #The printf is necessary to correctly decode unicode sequences
+    path=$($PRINTF "${1//\/\///}")
+    if [[ $HAVE_READLINK == 1 ]]; then
+        new_path=$(readlink -m "$path")
+
+        #Adding back the final slash, if present in the source
+        if [[ ${path: -1} == "/" && ${#path} > 1 ]]; then
+            new_path="$new_path/"
+        fi
+
+        echo "$new_path"
+    else
+        echo "$path"
+    fi
 }
 
 
@@ -275,10 +469,6 @@ case ${COMMAND} in
 		restore_from_source ${FILE_SRC}
 
 	;;
-    case)
-        get_user_credential
-        create_new_linux_user
-    ;;
     *)
 
         if [[ $COMMAND != "" ]]; then

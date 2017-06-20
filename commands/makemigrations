@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo -e "Connecting to virtualenv ........"
+source .venv/bin/activate
+echo -e "Create migrations if we have migration"
+python manage.py makemigrations
+echo -e "Then we must do migrate them ...."
+python manage.py migrate
+echo -e "If status code [OK] everything is ok :)"
+deactivate
+echo -e "Thanks for using my tool :)"
+

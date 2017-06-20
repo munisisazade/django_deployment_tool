@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo -e "Starting Django shell"
+echo -e "Python and Django developer"
+echo -e "swich virtual enviroment"
+source .venv/bin/activate
+./manage.py shell
+deactivate

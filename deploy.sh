@@ -60,6 +60,9 @@ function get_user_credential {
     echo -e "Installing python3 pip and depencies ..."
     apt-get -y install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
     apt-get -y install python3-venv
+    echo -e "Installing Pillow for $(uname -a)"
+    apt-get -y install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
+    apt-get -y install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev python-tk
     echo -e "Creating new User for $(uname -a)"
     echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
     echo -e "Please write New Linux User name and password"

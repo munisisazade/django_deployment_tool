@@ -119,8 +119,6 @@ function  get_project_details {
     . $CONF_ROOT/config.txt
     echo -e "Please Write your projects detailed...."
     apt-get -y update
-    echo -e "Creating new User for $(uname -a)"
-    echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
     echo -e "Please write your git repository url here"
     read -p "Git Repo(https): " GIT_REPO_URL
     while true ; do
@@ -142,7 +140,8 @@ function  get_project_details {
     cd /home/$APP_USER
     git clone $GIT_REPO_URL
     cd $GIT_ROOT
-    echo "APP_ROOT_DIRECTOR=$(pwd)" >> "$CONF_ROOT/config.txt"
+    local APP_ROOT_DIRECTOR=$(pwd)
+    echo "APP_ROOT_DIRECTOR=$APP_ROOT_DIRECTOR" >> "$CONF_ROOT/config.txt"
     echo -e "Please Last time write to project name (Django base app name) :"
     read -p "Project name : " APP_NAME
     while true ; do
@@ -152,7 +151,34 @@ function  get_project_details {
     read -p "Project name : " APP_NAME
     done
     echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
-
+sudo su - $APP_USER << EOF
+    cd $APP_ROOT_DIRECTOR
+    echo -e "Create Virtualenviroment"
+    python3 -m venv .venv
+    echo -e "Activate virtualenviroment"
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    pip install -U pip
+    python manage.py check
+    python manage.py migrate
+    echo -e "Configuration Nginx credentials.."
+    sudo sed -i -e 's|#{APP_SERVER}|'$APP_SERVER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/default
+    echo -e "Create nginx default server.."
+    sudo cp -r tlp/default /etc/nginx/sites-available/default
+    echo -e "Gunicorn file created.."
+    sudo sed -i -e 's|#{APP_USER}|'$APP_USER'|g' -e 's|#{APP_ROOT_DIRECTORY}|'$APP_ROOT_DIRECTORY'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/gunicorn.service
+    sudo cp -r tlp/gunicorn.service /etc/systemd/system/
+    echo -e "Everything works cool :)"
+    sudo cp -r $CONF_ROOT/commands/restart /bin/
+    sudo chmod +x /bin/restart
+    sudo cp -r $CONF_ROOT/commands/makemigrations /bin/
+    sudo chmod +x /bin/makemigrations
+    sudo cp -r $CONF_ROOT/commands/shell /bin/
+    sudo chmod +x /bin/shell
+    sudo systemctl start nginx
+    sudo systemctl start gunicorn
+    restart
+EOF
 
 
 
@@ -341,20 +367,7 @@ EOF
 
 
 
-function create_virtualenv() {
-    . $CONF_ROOT/config.txt
-    cd $APP_ROOT_DIRECTORY
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -r requirements.txt
-    pip install -U pip
-    python manage.py migrate
-    systemctl start nginx
-    systemctl start gunicorn
-    systemctl restart nginx
-    echo "Restarting nginx:                                                    [OK]"
-    systemctl restart gunicorn
-    echo "Restarting Gunicorn:                                                 [OK]"
+function done_script() {
     echo "Everything is OK :)"
     echo "---"
     echo "---"
@@ -413,8 +426,7 @@ case ${COMMAND} in
         fix_perl_locale_error
         create_new_linux_user
         get_project_details
-        configuration_server
-        create_virtualenv
+        done_script
     ;;
 
 	flush)

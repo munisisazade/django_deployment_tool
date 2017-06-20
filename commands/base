@@ -10,7 +10,7 @@ sudo su - $APP_USER_LINUX << \EOF
     cd /home/$APP_USER
     git clone $GIT_REPO_URL
     cd $GIT_ROOT
-    local APP_ROOT_DIRECTOR=$(pwd)
+    APP_ROOT_DIRECTOR=$(pwd)
     echo "APP_ROOT_DIRECTOR=$APP_ROOT_DIRECTOR" >> "$CONF_ROOT/config.txt"
     cd $APP_ROOT_DIRECTOR
     echo -e "Create Virtualenviroment"

@@ -1,9 +1,13 @@
 #!/bin/bash
 
 CONF_ROOT=/var/local
+GIT_ROOT=#{GIT_ROOT}
+APP_SERVER=#{APP_SERVER}
+APP_NAME=#{APP_NAME}
+APP_USER=#{APP_USER}
+
 
 sudo su - #{APP_USER} << EOF
-    . $CONF_ROOT/config.txt
     echo -e "Clonig git repository from this url:  $GIT_REPO_URL"
     cd /home/$APP_USER
     git clone $GIT_REPO_URL

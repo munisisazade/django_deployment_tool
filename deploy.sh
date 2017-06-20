@@ -349,6 +349,8 @@ EOF
 
 
 function done_script() {
+    . $CONF_ROOT/config.txt
+    sudo su - $APP_USER
     echo "Everything is OK :)"
     echo "---"
     echo "---"
@@ -356,6 +358,7 @@ function done_script() {
     start the server and you'll be able to see the django-app!"
     echo "---"
     echo "---"
+
 
 }
 

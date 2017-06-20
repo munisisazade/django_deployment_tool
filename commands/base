@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONF_ROOT=#{CONF_ROOT}
+CONF_ROOT=/var/local
 
 sudo su - #{APP_USER} << EOF
     sudo . $CONF_ROOT/config.txt

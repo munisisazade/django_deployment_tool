@@ -3,7 +3,7 @@
 APP_USER_LINUX=#{APP_USER_LINUX}
 
 
-sudo su - $APP_USER_LINUX << EOF
+sudo su - $APP_USER_LINUX << \EOF
     CONF_ROOT=/var/local
     source $CONF_ROOT/config.txt
     echo -e "Clonig git repository from this url:  $GIT_REPO_URL"

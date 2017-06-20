@@ -139,12 +139,6 @@ function  get_project_details {
     read -p "Please enter git root file name : " GIT_ROOT
     done
     echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
-    echo -e "Clonig git repository from this url:  $GIT_REPO_URL"
-    cd /home/$APP_USER
-    git clone $GIT_REPO_URL
-    cd $GIT_ROOT
-    local APP_ROOT_DIRECTOR=$(pwd)
-    echo "APP_ROOT_DIRECTOR=$APP_ROOT_DIRECTOR" >> "$CONF_ROOT/config.txt"
     echo -e "Please Last time write to project name (Django base app name) :"
     read -p "Project name : " APP_NAME
     while true ; do
@@ -155,6 +149,13 @@ function  get_project_details {
     done
     echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
 sudo su - $APP_USER << EOF
+    sudo . $CONF_ROOT/config.txt
+    echo -e "Clonig git repository from this url:  $GIT_REPO_URL"
+    cd /home/$APP_USER
+    git clone $GIT_REPO_URL
+    cd $GIT_ROOT
+    local APP_ROOT_DIRECTOR=$(pwd)
+    echo "APP_ROOT_DIRECTOR=$APP_ROOT_DIRECTOR" >> "$CONF_ROOT/config.txt"
     cd $APP_ROOT_DIRECTOR
     echo -e "Create Virtualenviroment"
     python3 -m venv .venv

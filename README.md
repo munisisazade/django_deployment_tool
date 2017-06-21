@@ -9,7 +9,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/munisisazade/django_deployment_tool.svg)](https://github.com/munisisazade/django_deployment_tool/issues)
 [![GitHub forks](https://img.shields.io/github/forks/munisisazade/django_deployment_tool.svg)](https://github.com/munisisazade/django_deployment_tool/network)
 [![GitHub stars](https://img.shields.io/github/stars/munisisazade/django_deployment_tool.svg)](https://github.com/munisisazade/django_deployment_tool/stargazers)
-[![Twitter](https://img.shields.io/twitter/url/https/github.com/munisisazade/django_deployment_tool.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=%5Bobject%20Object%5D)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/munisisazade/django_deployment_tool.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https://github.com/munisisazade/django_deployment_tool)
 
 ### --- How to install and use for Ubuntu 16.04 ###
 

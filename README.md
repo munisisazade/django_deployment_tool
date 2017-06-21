@@ -5,6 +5,8 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/django-deployment-tool/badge/?version=latest)](http://django-deployment-tool.readthedocs.io/en/latest/?badge=latest)
 [![Python Django](https://img.shields.io/badge/python-django-blue.svg)](http://django-deployment-tool.readthedocs.io/en/latest/?badge=latest)
+[![Devloper Munis](https://img.shields.io/badge/developer-Munis-brightgreen.svg)](http://django-deployment-tool.readthedocs.io/en/latest/?badge=latest)
+
 ### --- How to install and use for Ubuntu 16.04 ###
 
 First you need to install python3 and after install django you can run the project following bellow steps

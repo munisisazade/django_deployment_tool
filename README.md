@@ -6,6 +6,10 @@
 [![Documentation Status](https://readthedocs.org/projects/django-deployment-tool/badge/?version=latest)](http://django-deployment-tool.readthedocs.io/en/latest/?badge=latest)
 [![Python Django](https://img.shields.io/badge/python-django-blue.svg)](http://django-deployment-tool.readthedocs.io/en/latest/?badge=latest)
 [![Devloper Munis](https://img.shields.io/badge/developer-Munis-brightgreen.svg)](http://django-deployment-tool.readthedocs.io/en/latest/?badge=latest)
+[![GitHub issues](https://img.shields.io/github/issues/munisisazade/django_deployment_tool.svg)](https://github.com/munisisazade/django_deployment_tool/issues)
+[![GitHub forks](https://img.shields.io/github/forks/munisisazade/django_deployment_tool.svg)](https://github.com/munisisazade/django_deployment_tool/network)
+[![GitHub stars](https://img.shields.io/github/stars/munisisazade/django_deployment_tool.svg)](https://github.com/munisisazade/django_deployment_tool/stargazers)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/munisisazade/django_deployment_tool.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=%5Bobject%20Object%5D)
 
 ### --- How to install and use for Ubuntu 16.04 ###
 

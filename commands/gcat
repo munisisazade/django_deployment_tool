@@ -1,0 +1,10 @@
+#!/bin/bash
+
+fileType="$(file "$1" | grep -o 'text')"
+if [ "$fileType" == 'text' ]; then
+    echo -en "\033[0;32m"
+else
+    echo -en "\033[0;32m"
+fi
+cat $1
+echo -en "\033[0m"

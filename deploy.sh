@@ -75,11 +75,13 @@ function get_user_credential {
     done
     echo "APP_USER=$APP_USER" >> "$CONF_ROOT/config.txt"
     echo -e "Please enter your linux user password: "
+    echo -n "Password :"
     read -s APP_USER_PASSWORD
     while true ; do
     if [ $APP_USER_PASSWORD ]; then
         break
     fi
+    echo -n "Password :"
     read -s APP_USER_PASSWORD
     done
     echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "$CONF_ROOT/config.txt"
@@ -123,16 +125,35 @@ function  get_project_details {
     echo -e "Please Write your projects detailed...."
     apt-get -y update
     echo -e "Please write your git repository url here"
-    read -p "Git Repo(https): " GIT_REPO_URL
+    read -p "Git Repo : " GIT_REPO_URL
     while true ; do
     if [ $GIT_REPO_URL ]; then
         break
     fi
-    read -p "Please enter Repo Url(https): " GIT_REPO_URL
+    read -p "Please enter Repo Url : " GIT_REPO_URL
     done
     echo "GIT_REPO_URL=$GIT_REPO_URL" >> "$CONF_ROOT/config.txt"
     GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
     echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
+    if [[ $GIT_REPO_URL == *git@github* ]]; then
+      echo -e "Using the SSH protocol, you can connect and authenticate to remote servers and services. With SSH keys, you can connect to GitHub without supplying your username or password at each visit."
+      echo -e "Generating a new SSH key and adding it to the ssh-agent"
+      ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+      cp -r $CONF_ROOT/commands/gcat /bin/
+      chmod +x /bin/gcat
+      echo -e "Plase write this ssh-keygen register your Github or Bitbucket account "
+      gcat ~/.ssh/id_rsa.pub
+      read -p "If you did please confirm to continued(yes/no)?" confirm
+      while true ; do
+          if [ "$confirm"==yes ]; then
+            break
+          fi
+          echo -e "Ssh key is bellow:"
+          gcat ~/.ssh/id_rsa.pub
+          read -p "Please confirm to continued(yes/no)?" confirm
+      done
+    fi
+
     echo -e "Please Last time write to project name (Django base app name) :"
     read -p "Project name : " APP_NAME
     while true ; do

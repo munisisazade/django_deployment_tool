@@ -138,7 +138,6 @@ function  get_project_details {
       echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
       echo -e "Using the SSH protocol, you can connect and authenticate to remote servers and services. With SSH keys, you can connect to GitHub without supplying your username or password at each visit."
       echo -e "Generating a new SSH key and adding it to the ssh-agent"
-      ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
       cp -r $CONF_ROOT/commands/gcat /bin/
       chmod +x /bin/gcat
       sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/userssh

@@ -155,9 +155,10 @@ function  get_project_details {
           gcat ~/home/$APP_USER/.ssh/id_rsa.pub
           read -p "Please confirm to continued(yes/no)?" confirm
       done
+    else
+      GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
+      echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
     fi
-    GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
-    echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
     echo -e "Please Last time write to project name (Django base app name) :"
     read -p "Project name : " APP_NAME
     while true ; do

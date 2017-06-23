@@ -133,9 +133,9 @@ function  get_project_details {
     read -p "Please enter Repo Url : " GIT_REPO_URL
     done
     echo "GIT_REPO_URL=$GIT_REPO_URL" >> "$CONF_ROOT/config.txt"
-    GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
-    echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
     if [[ $GIT_REPO_URL == *git@github* ]]; then
+      GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'/' -f 2 | cut -d'.' -f 1)
+      echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
       echo -e "Using the SSH protocol, you can connect and authenticate to remote servers and services. With SSH keys, you can connect to GitHub without supplying your username or password at each visit."
       echo -e "Generating a new SSH key and adding it to the ssh-agent"
       ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
@@ -156,7 +156,8 @@ function  get_project_details {
           read -p "Please confirm to continued(yes/no)?" confirm
       done
     fi
-
+    GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
+    echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
     echo -e "Please Last time write to project name (Django base app name) :"
     read -p "Project name : " APP_NAME
     while true ; do

@@ -141,15 +141,18 @@ function  get_project_details {
       ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
       cp -r $CONF_ROOT/commands/gcat /bin/
       chmod +x /bin/gcat
+      sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/userssh
+      cp -r $CONF_ROOT/commands/userssh /bin/
+      chmod +x /bin/userssh
       echo -e "Plase write this ssh-keygen register your Github or Bitbucket account "
-      gcat ~/.ssh/id_rsa.pub
+      userssh
       read -p "If you did please confirm to continued(yes/no)?" confirm
       while true ; do
           if [ "$confirm"==yes ]; then
             break
           fi
           echo -e "Ssh key is bellow:"
-          gcat ~/.ssh/id_rsa.pub
+          gcat ~/home/$APP_USER/.ssh/id_rsa.pub
           read -p "Please confirm to continued(yes/no)?" confirm
       done
     fi

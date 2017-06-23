@@ -1,0 +1,8 @@
+#!/bin/bash
+
+APP_USER_LINUX=#{APP_USER_LINUX}
+
+sudo su - $APP_USER_LINUX << /EOF
+    ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+    gcat ~/.ssh/id_rsa.pub
+EOF

@@ -20,6 +20,7 @@ sudo su - $APP_USER_LINUX << \EOF
     pip install -r requirements.txt
     pip install -U pip
     python manage.py check
+    python manage.py makemigrations
     python manage.py migrate
     echo -e "Configuration Nginx credentials.."
     sed -i -e 's|#{APP_SERVER}|'$APP_SERVER'|g' -e 's|#{APP_ROOT_DIRECTOR}|'$APP_ROOT_DIRECTOR'|g' -e 's|#{APP_NAME}|'$APP_NAME'|g' $CONF_ROOT/tlp/default

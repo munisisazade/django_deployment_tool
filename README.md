@@ -26,5 +26,5 @@ $ ./deploy.sh status
 # And Read full documentation [Documentation](http://django-deployment-tool.readthedocs.io/en/latest/) #
 #
 <p align="center">
-  <img src="https://im2.ezgif.com/tmp/ezgif-2-c12c77840c.gif" width="800" height="450">
+  <iframe width="420" height="345" src="http://www.youtube.com/embed/hlGdZ9ML7NI?autoplay=1" frameborder="0" allowfullscreen></iframe>
 </p>

@@ -26,5 +26,5 @@ $ ./deploy.sh status
 # And Read full documentation [Documentation](http://django-deployment-tool.readthedocs.io/en/latest/) #
 #
 <p align="center">
-  <iframe width="420" height="345" src="http://www.youtube.com/embed/hlGdZ9ML7NI?autoplay=1" frameborder="0" allowfullscreen></iframe>
+  [![Deployment Tool Django](http://img.youtube.com/vi/hlGdZ9ML7NI/0.jpg)](http://www.youtube.com/watch?v=hlGdZ9ML7NI "Django Deployment Tool testing")
 </p>

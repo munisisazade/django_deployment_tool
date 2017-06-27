@@ -36,6 +36,8 @@ sudo su - $APP_USER_LINUX << \EOF
     sudo chmod +x /bin/makemigrations
     sudo cp -r $CONF_ROOT/commands/shell /bin/
     sudo chmod +x /bin/shell
+    sudo cp -r $CONF_ROOT/commands/check /bin/
+    sudo chmod +x /bin/check
     sudo systemctl start nginx
     sudo systemctl start gunicorn
     restart

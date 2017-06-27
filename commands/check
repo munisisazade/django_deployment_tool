@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Starting check django application ......"
+source .venv/bin/activate
+if ./manage.py check; then
+   echo "If nothing happen everything was good :)"
+   echo "Keep it rock, Happy Coding!"
+else
+   echo "Some error ocurred don't be blame :("
+   echo "Try to solve this error, else program not working correctly :/"
+fi
+deactivate

@@ -38,6 +38,8 @@ sudo su - $APP_USER_LINUX << \EOF
     sudo chmod +x /bin/shell
     sudo cp -r $CONF_ROOT/commands/check /bin/
     sudo chmod +x /bin/check
+    sudo cp -r $CONF_ROOT/commands/install_redis /bin/
+    sudo chmod +x /bin/install_redis
     sudo systemctl start nginx
     sudo systemctl start gunicorn
     restart

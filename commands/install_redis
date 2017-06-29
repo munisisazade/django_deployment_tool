@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo -e "Installing redis-server for Ubuntu 16.04"
+cd ~/
+whoami
+echo -e "Download, Compile, and Install Redis"
+echo -e "Download and Extract the Source Code"
+cd /tmp
+echo -e "Now, download the latest stable version of Redis. This is always available at a stable"
+curl -O http://download.redis.io/redis-stable.tar.gz
+echo -e "Unpack the tarball"
+tar xzvf redis-stable.tar.gz
+echo -e "Move into the Redis source directory structure that was just extracted"
+cd redis-stable
+echo -e "Build and Install Redis"
+make
+echo -e "After the binaries are compiled, run the test suite to make sure everything was built correctly. You can do make test"
+make test
+echo -e "This will typically take a few minutes to run. Once it is complete, you can install the binaries onto the system by typing make install"
+echo -e "/n"
+echo -e "Configure Redis"
+cd ~/
+sudo mkdir /etc/redis
+echo -e "Now, copy over the sample Redis configuration file included in the Redis source archive"
+sudo cp /tmp/redis-stable/redis.conf /etc/redis
+
+sudo sed -i -e 's|supervised no|supervised systemd|g' -e 's|dir ./|dir /var/lib/redis|g' /etc/redis/redis.conf
+sudo cp -r /var/local/redis.service /etc/systemd/system/
+echo -e "Create redis user"
+sudo adduser --system --group --no-create-home redis
+echo -e "Now, we can create the /var/lib/redis directory"
+sudo mkdir /var/lib/redis
+echo -e "We should give the redis user and group ownership over this directory"
+sudo chown redis:redis /var/lib/redis
+echo -e "Adjust the permissions so that regular users cannot access this location"
+sudo chmod 770 /var/lib/redis
+sudo systemctl start redis
+echo -e "Check status"
+sudo systemctl status redis
+

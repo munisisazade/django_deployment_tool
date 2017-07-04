@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 .idea/
 __pycache__/
+.deploy.sh.swp
 *.py[cod]
 *$py.class
 

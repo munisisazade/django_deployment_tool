@@ -23,6 +23,6 @@ $ ./deploy.sh usage
 $ ./deploy.sh deploy
 $ ./deploy.sh status
 ```
-# And Read full documentation [Documentation](http://django-deployment-tool.readthedocs.io/en/latest/) #
+# And Read full [Documentation](http://django-deployment-tool.readthedocs.io/en/latest/) #
 #
 [![Deployment Tool Django](http://img.youtube.com/vi/hlGdZ9ML7NI/0.jpg)](http://www.youtube.com/watch?v=hlGdZ9ML7NI "Django Deployment Tool testing")

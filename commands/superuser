@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo -e "Create Django Superuser"
+source .venv/bin/activate
+
+python manage.py createsuperuser

@@ -193,6 +193,9 @@ function  get_project_details {
         cp -r  $CONF_ROOT/config.txt /var/local/
         chown -R $APP_USER:$APP_USER /var/local/config.txt
         chmod -R 777 /var/local/config.txt
+        cp -r  $CONF_ROOT/status.txt /var/local/
+        chown -R $APP_USER:$APP_USER /var/local/config.txt
+        chmod -R 777 /var/local/status.txt
         cp -r  $CONF_ROOT/commands /var/local/
         chown -R $APP_USER:$APP_USER /var/local/commands
         chown -R $APP_USER:$APP_USER /var/local/commands/*

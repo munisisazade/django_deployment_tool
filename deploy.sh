@@ -410,8 +410,8 @@ function done_script() {
         sudo su - $APP_USER
     else
         echo "You have a error :("
-        echo "Deployment unsuccessfull , \
-        If you want to show error log write cat /var/local/error.log"
+        echo "Deployment unsuccessfull"
+        echo "If you want to show error log write cat /home/$APP_USER/error.log"
     fi
 
 }

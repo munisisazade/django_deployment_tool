@@ -399,15 +399,20 @@ EOF
 
 function done_script() {
     . $CONF_ROOT/config.txt
-
-    echo "Everything is OK :)"
-    echo "---"
-    echo "---"
-    echo "Deployment ready! Now log into linux user, intialize the virtual environment, \
-    start the server and you'll be able to see the django-app!"
-    echo "---"
-    echo "---"
-    sudo su - $APP_USER
+    if [ ! -f "/var/local/error.log" ]; then
+        echo "Everything is OK :)"
+        echo "---"
+        echo "---"
+        echo "Deployment ready! Now log into linux user, intialize the virtual environment, \
+        start the server and you'll be able to see the django-app!"
+        echo "---"
+        echo "---"
+        sudo su - $APP_USER
+    else
+        echo "You have a error :("
+        echo "Deployment unsuccessfull , \
+        If you want to show error log write cat /var/local/error.log"
+    fi
 
 }
 

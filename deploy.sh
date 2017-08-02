@@ -51,41 +51,57 @@ function deployment_status() {
 
 
 function get_user_credential {
-    echo -e "Ubuntu Update apt package ...."
-    chmod +x config.txt
-    echo -e "Installing python2 pip and depencies ..."
-    apt-get -y update
-    apt-get -y install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx
-    apt-get -y update
-    echo -e "Installing python3 pip and depencies ..."
-    apt-get -y install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
-    apt-get -y install python3-venv
-    echo -e "Installing Pillow for $(uname -a)"
-    apt-get -y install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
-    apt-get -y install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev python-tk
-    echo -e "Creating new User for $(uname -a)"
-    echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
-    echo -e "Please write New Linux User name and password"
-    read -p "Please enter your linux username: " APP_USER
-    while true ; do
-    if [ $APP_USER ]; then
-        break
+    . $CONF_ROOT/status.txt
+    . $CONF_ROOT/config.txt
+    if [ $INSTALLATION_STEP ]; then
+        echo -e "Check the installation step .........."
+        sleep 3
+        echo -e "\e[32mInstallation step ....................... [OK]\e[0m"
+    else
+        echo -e "Ubuntu Update apt package ...."
+        chmod +x config.txt
+        chmod +x status.txt
+        echo -e "Installing python2 pip and depencies ..."
+        apt-get -y update
+        apt-get -y install python-pip python-dev libpq-dev postgresql postgresql-contrib nginx gettext
+        apt-get -y update
+        echo -e "Installing python3 pip and depencies ..."
+        apt-get -y install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx
+        apt-get -y install python3-venv
+        echo -e "Installing Pillow for $(uname -a)"
+        apt-get -y install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
+        apt-get -y install libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev python-tk
+        echo "INSTALLATION_STEP=True" >> "$CONF_ROOT/status.txt"
     fi
-    read -p "Please enter your linux username: " APP_USER
-    done
-    echo "APP_USER=$APP_USER" >> "$CONF_ROOT/config.txt"
-    echo -e "Please enter your linux user password: "
-    echo -n "Password :"
-    read -s APP_USER_PASSWORD
-    while true ; do
-    if [ $APP_USER_PASSWORD ]; then
-        break
+    if [ $CREATE_LINUX_USER_STEP ]; then
+        echo -e "Check Linux user ............"
+        sleep 3
+        echo -e "\e[32mLinux User step ......................... [OK]\e[0m"
+    else
+        echo -e "Creating new User for $(uname -a)"
+        echo "APP_SERVER=$(curl -4 https://icanhazip.com/)" >> "$CONF_ROOT/config.txt"
+        echo -e "Please write New Linux User name and password"
+        read -p "Please enter your linux username: " APP_USER
+        while true ; do
+        if [ $APP_USER ]; then
+            break
+        fi
+        read -p "Please enter your linux username: " APP_USER
+        done
+        echo "APP_USER=$APP_USER" >> "$CONF_ROOT/config.txt"
+        echo -e "Please enter your linux user password: "
+        echo -n "Password :"
+        read -s APP_USER_PASSWORD
+        while true ; do
+        if [ $APP_USER_PASSWORD ]; then
+            break
+        fi
+        echo -n "Password :"
+        read -s APP_USER_PASSWORD
+        done
+        echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "$CONF_ROOT/config.txt"
+        echo "CREATE_LINUX_USER_STEP=True" >> "$CONF_ROOT/status.txt"
     fi
-    echo -n "Password :"
-    read -s APP_USER_PASSWORD
-    done
-    echo "APP_USER_PASSWORD=$APP_USER_PASSWORD" >> "$CONF_ROOT/config.txt"
-
 }
 
 
@@ -122,69 +138,76 @@ function  create_new_linux_user {
 
 function  get_project_details {
     . $CONF_ROOT/config.txt
-    echo -e "Please Write your projects detailed...."
-    apt-get -y update
-    echo -e "Please write your git repository url here"
-    read -p "Git Repo : " GIT_REPO_URL
-    while true ; do
-    if [ $GIT_REPO_URL ]; then
-        break
-    fi
-    read -p "Please enter Repo Url : " GIT_REPO_URL
-    done
-    echo "GIT_REPO_URL=$GIT_REPO_URL" >> "$CONF_ROOT/config.txt"
-    if [[ $GIT_REPO_URL == *git@* ]]; then
-      GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'/' -f 2 | cut -d'.' -f 1)
-      echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
-      echo -e "Using the SSH protocol, you can connect and authenticate to remote servers and services. With SSH keys, you can connect to GitHub without supplying your username or password at each visit."
-      echo -e "Generating a new SSH key and adding it to the ssh-agent"
-      cp -r $CONF_ROOT/commands/gcat /bin/
-      chmod +x /bin/gcat
-      sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/userssh
-      cp -r $CONF_ROOT/commands/userssh /bin/
-      chmod +x /bin/userssh
-      echo -e "Plase write this ssh-keygen register your Github or Bitbucket account "
-      userssh
-      read -p "If you did please confirm to continued(yes/no)?" confirm
-      while true ; do
-          if [ "$confirm"==yes ]; then
-            break
-          fi
-          echo -e "Ssh key is bellow:"
-          gcat ~/home/$APP_USER/.ssh/id_rsa.pub
-          read -p "Please confirm to continued(yes/no)?" confirm
-      done
+    . $CONF_ROOT/status.txt
+    if [ $INSTALLATION_GIT_PROJECT ]; then
+        echo "Check Git project installtion step ........."
+        sleep 3
+        echo -e "\e[32mGit configuration ....................... [OK]\e[0m"
     else
-      GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
-      echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
+        echo -e "Please Write your projects detailed...."
+        apt-get -y update
+        echo -e "Please write your git repository url here"
+        read -p "Git Repo : " GIT_REPO_URL
+        while true ; do
+        if [ $GIT_REPO_URL ]; then
+            break
+        fi
+        read -p "Please enter Repo Url : " GIT_REPO_URL
+        done
+        echo "GIT_REPO_URL=$GIT_REPO_URL" >> "$CONF_ROOT/config.txt"
+        if [[ $GIT_REPO_URL == *git@* ]]; then
+          GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'/' -f 2 | cut -d'.' -f 1)
+          echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
+          echo -e "Using the SSH protocol, you can connect and authenticate to remote servers and services. With SSH keys, you can connect to GitHub without supplying your username or password at each visit."
+          echo -e "Generating a new SSH key and adding it to the ssh-agent"
+          cp -r $CONF_ROOT/commands/gcat /bin/
+          chmod +x /bin/gcat
+          sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/userssh
+          cp -r $CONF_ROOT/commands/userssh /bin/
+          chmod +x /bin/userssh
+          echo -e "Plase write this ssh-keygen register your Github or Bitbucket account "
+          userssh
+          read -p "If you did please confirm to continued(yes/no)?" confirm
+          while true ; do
+              if [ "$confirm"==yes ]; then
+                break
+              fi
+              echo -e "Ssh key is bellow:"
+              gcat ~/home/$APP_USER/.ssh/id_rsa.pub
+              read -p "Please confirm to continued(yes/no)?" confirm
+          done
+        else
+          GIT_ROOT=$(echo $GIT_REPO_URL | cut -d'.' -f 2 | cut -d'/' -f 3)
+          echo "GIT_ROOT=$GIT_ROOT" >> "$CONF_ROOT/config.txt"
+        fi
+        echo -e "Please Last time write to project name (Django base app name) :"
+        read -p "Project name : " APP_NAME
+        while true ; do
+        if [ $APP_NAME ]; then
+            break
+        fi
+        read -p "Project name : " APP_NAME
+        done
+        echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
+        echo -e "Make commands executable"
+        cp -r  $CONF_ROOT/config.txt /var/local/
+        chown -R $APP_USER:$APP_USER /var/local/config.txt
+        chmod -R 777 /var/local/config.txt
+        cp -r  $CONF_ROOT/commands /var/local/
+        chown -R $APP_USER:$APP_USER /var/local/commands
+        chown -R $APP_USER:$APP_USER /var/local/commands/*
+        chmod -R 777 /var/local/commands/*
+        cp -r  $CONF_ROOT/tlp /var/local/
+        chown -R $APP_USER:$APP_USER /var/local/tlp
+        chown -R $APP_USER:$APP_USER /var/local/tlp/*
+        chmod -R 777 /var/local/tlp/*
+        cp -r /var/local/tlp/pipeline.sh /root/
+        chmod +x /root/pipeline.sh
+        echo -e "Base command sed "
+        sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/base
+        cp -r  $CONF_ROOT/commands/base /bin/
+        chmod +x /bin/base
     fi
-    echo -e "Please Last time write to project name (Django base app name) :"
-    read -p "Project name : " APP_NAME
-    while true ; do
-    if [ $APP_NAME ]; then
-        break
-    fi
-    read -p "Project name : " APP_NAME
-    done
-    echo "APP_NAME=$APP_NAME" >> "$CONF_ROOT/config.txt"
-    echo -e "Make commands executable"
-    cp -r  $CONF_ROOT/config.txt /var/local/
-    chown -R $APP_USER:$APP_USER /var/local/config.txt
-    chmod -R 777 /var/local/config.txt
-    cp -r  $CONF_ROOT/commands /var/local/
-    chown -R $APP_USER:$APP_USER /var/local/commands
-    chown -R $APP_USER:$APP_USER /var/local/commands/*
-    chmod -R 777 /var/local/commands/*
-    cp -r  $CONF_ROOT/tlp /var/local/
-    chown -R $APP_USER:$APP_USER /var/local/tlp
-    chown -R $APP_USER:$APP_USER /var/local/tlp/*
-    chmod -R 777 /var/local/tlp/*
-    cp -r /var/local/tlp/pipeline.sh /root/
-    chmod +x /root/pipeline.sh
-    echo -e "Base command sed "
-    sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/base
-    cp -r  $CONF_ROOT/commands/base /bin/
-    chmod +x /bin/base
     base
 }
 

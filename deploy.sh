@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author Munis Isazade Django developer
-VERSION="0.1"
+VERSION="1.5"
 ERROR_STATUS=0
 CONF_ROOT=/root/django_deployment_tool
 POSTGRESQL_USER=postgres
@@ -107,12 +107,12 @@ function get_user_credential {
 
 function fix_perl_locale_error() {
     echo -e "Fixing perl  warning: Setting locale error..."
-    uname -a
-    perl -e exit
     export LANGUAGE=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
     export LANG=en_US.UTF-8
     export LC_TYPE=en_US.UTF-8
+    uname -a
+    perl -e exit
 }
 
 function  create_new_linux_user {

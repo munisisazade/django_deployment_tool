@@ -8,7 +8,6 @@ sudo su - $APP_USER_LINUX << \EOF
     CONF_ROOT=/var/local
     source $CONF_ROOT/config.txt
     source $CONF_ROOT/status.txt
-    sudo !
     if [ $REPO_CLONE ]; then
         echo "Repository check ...."
         sleep 3
@@ -45,11 +44,11 @@ sudo su - $APP_USER_LINUX << \EOF
         echo -e "|   +-- tests.py"
         echo -e "|-- ${bold}manage.py${normal}"
         echo -e "|-- ${bold}requirements.txt${normal}\e[0m"
-        sudo touch $CONF_ROOT/error.log
-        sudo echo "ERROR : manage.py file doest exist the system" >> $CONF_ROOT/error.log
+        touch /home/$APP_USER/error.log
+        echo "ERROR : manage.py file doest exist the system" >> /home/$APP_USER/error.log
         exit 123
     else
-        sudo rm -rf $CONF_ROOT/error.log
+        sudo rm -rf /home/$APP_USER/error.log
     fi
     if [ ! -f "requirements.txt" ]; then
         echo -e "\e[31mERROR : requirements.txt file doest exist the system\e[0m"
@@ -57,11 +56,11 @@ sudo su - $APP_USER_LINUX << \EOF
         echo -e "Add application requirements files your project"
         echo -e "pip install gunicorn"
         echo -e "pip freeze > ${bold}requirements.txt${normal}"
-        sudo touch $CONF_ROOT/error.log
-        sudo echo "ERROR : requirements.txt file doest exist the system" >> $CONF_ROOT/error.log
+        touch /home/$APP_USER/error.log
+        echo "ERROR : requirements.txt file doest exist the system" >> /home/$APP_USER/error.log
         exit 123
     else
-        sudo rm -rf $CONF_ROOT/error.log
+        rm -rf /home/$APP_USER/error.log
     fi
     echo -e "Create Virtualenviroment"
     python3 -m venv .venv

@@ -399,7 +399,7 @@ EOF
 
 function done_script() {
     . $CONF_ROOT/config.txt
-    if [ ! -f "/var/local/error.log" ]; then
+    if [ ! -f "/home/$APP_USER/error.log" ]; then
         echo "Everything is OK :)"
         echo "---"
         echo "---"

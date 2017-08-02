@@ -8,11 +8,11 @@ sudo su - #{APP_USER} << EOF
     echo -e "Check system issues"
     python manage.py check
     echo -e "Stage deploy to Server"
-    restart
+    git pull
     echo -e "Installing some packages .."
     pip install -r requirements.txt
     echo -e "Makemigrations "
-    makemigrations
+    python manage.py migrate
     echo -e "Check error issues"
     check
     echo -e "Everything works fine :)"

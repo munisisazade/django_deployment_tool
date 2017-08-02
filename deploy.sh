@@ -210,6 +210,7 @@ function  get_project_details {
         sed -i -e 's|#{APP_USER_LINUX}|'$APP_USER'|g' $CONF_ROOT/commands/base
         cp -r  $CONF_ROOT/commands/base /bin/
         chmod +x /bin/base
+        echo "INSTALLATION_GIT_PROJECT=True" >> $CONF_ROOT/status.txt
     fi
     base
 }

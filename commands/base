@@ -29,20 +29,20 @@ sudo su - $APP_USER_LINUX << \EOF
     fi
     cd $APP_ROOT_DIRECTOR
     if [ ! -f "manage.py" ]; then
-        echo -e "\e[31mERROR $(date): manage.py file doest exist the system\e[0m"
-        echo -e "\e[31mPlease make sure your django application modern root directory look like:"
+        echo -e "\e[31mERROR : manage.py file doest exist the system\e[0m"
+        echo -e "\e[34mPlease make sure your django application modern root directory look like:"
         echo -e "|-- base_app_name"
         echo -e "|   |-- __init__.py"
         echo -e "|   |-- settings.py"
         echo -e "|   |-- urls.py"
-        echo -e "|   `-- wsgi.py"
+        echo -e "|   +-- wsgi.py"
         echo -e "|-- app_name"
         echo -e "|   |-- admin.py"
         echo -e "|   |-- apps.py"
         echo -e "|   |-- __init__.py"
         echo -e "|   |-- models.py"
         echo -e "|   |-- views.py"
-        echo -e "|   `-- tests.py"
+        echo -e "|   +-- tests.py"
         echo -e "|-- ${bold}manage.py${normal}"
         echo -e "|-- ${bold}requirements.txt${normal}\e[0m"
         exit 123

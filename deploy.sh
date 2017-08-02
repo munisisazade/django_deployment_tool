@@ -117,7 +117,12 @@ function fix_perl_locale_error() {
 
 function  create_new_linux_user {
     . $CONF_ROOT/config.txt
-    if ! getent $APP_USER_PASSWORD $APP_USER  > /dev/null ; then
+    if [ $ALREADY_CREATE_USER ] ; then
+        echo -e "Already You was created New user with Bellow credential"
+        echo -e "\t Username : \t - $APP_USER"
+        echo -e "\t Password : \t - $APP_USER_PASSWORD"
+        echo -e "\t Created time \t - $(date)"
+    else
         echo -e "Creating New Linux User please wait .."
         pass=$(perl -e 'print crypt($ARGV[0], "password")' $APP_USER_PASSWORD)
         useradd -m -p $pass $APP_USER
@@ -127,11 +132,7 @@ function  create_new_linux_user {
         echo -e "\t Username : \t - $APP_USER"
         echo -e "\t Password : \t - $APP_USER_PASSWORD"
         echo -e "\t Created time \t - $(date)"
-    else
-        echo -e "Already You was created New user with Bellow credential"
-        echo -e "\t Username : \t - $APP_USER"
-        echo -e "\t Password : \t - $APP_USER_PASSWORD"
-        echo -e "\t Created time \t - $(date)"
+        echo "ALREADY_CREATE_USER=True" >> $CONF_ROOT/config.txt
     fi
 
 }
@@ -398,6 +399,7 @@ EOF
 
 function done_script() {
     . $CONF_ROOT/config.txt
+
     echo "Everything is OK :)"
     echo "---"
     echo "---"

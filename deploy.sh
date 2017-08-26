@@ -31,7 +31,7 @@ function usage {
 
 function deployment_status() {
     . $CONF_ROOT/config.txt
-    if [[ $APP_USER && $APP_USER_PASSWORD ]]; then
+    if [[ $APP_USER && $DEPLOYMENT_STATUS ]]; then
         echo -e "Current deploy status:"
         echo -e "\n"
         echo -e "\nDjango\t\t\t\t\tAlready Deploy"
@@ -58,6 +58,11 @@ function get_user_credential {
         sleep 3
         echo -e "\e[32mInstallation step ....................... [OK]\e[0m"
     else
+        clear
+        echo "************************************************************************"
+        echo "!!!!!!!!!!!!!!!!!!!! Start Installing as `whoami`... !!!!!!!!!!!!!!!!!!!"
+        echo "************************************************************************"
+        echo ""
         echo -e "Ubuntu Update apt package ...."
         chmod +x config.txt
         chmod +x status.txt
@@ -407,6 +412,7 @@ function done_script() {
         start the server and you'll be able to see the django-app!"
         echo "---"
         echo "---"
+        echo "DEPLOYMENT_STATUS=True" >> $CONF_ROOT/config.txt
         sudo su - $APP_USER
     else
         echo "You have a error :("

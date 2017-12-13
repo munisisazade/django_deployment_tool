@@ -210,6 +210,7 @@ function  get_project_details {
         chown -R $APP_USER:$APP_USER /var/local/tlp
         chown -R $APP_USER:$APP_USER /var/local/tlp/*
         chmod -R 777 /var/local/tlp/*
+        sed -i -e 's|#{APP_ROOT_DIRECTOR}|'$APP_ROOT_DIRECTOR'|g' -e 's|#{APP_USER}|'$APP_USER'|g' /var/local/tlp/pipeline.sh
         cp -r /var/local/tlp/pipeline.sh /root/
         chmod +x /root/pipeline.sh
         echo -e "Base command sed "
